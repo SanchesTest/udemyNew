@@ -36,8 +36,3 @@ if (personalMovieDB.count < 10) {
 console.log(personalMovieDB);
 
 
-const l = 'hello world test';
-
-let s = l.substr(1, 5);
-
-console.log(s)
