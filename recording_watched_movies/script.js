@@ -40,7 +40,6 @@ const personalMovieDB = {
     },
     writeYourGenres: function () {
         for (let i = 1; i < 2; i++) {
-
             let ganres = prompt(`Ваши любимые жанры через запятую`).toLowerCase();
             
             if(ganres === '' || ganres == null){
