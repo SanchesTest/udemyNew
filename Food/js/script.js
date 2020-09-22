@@ -192,12 +192,13 @@ window.addEventListener('DOMContentLoaded', () => {
 // ====================================================================================
 
 class MenuCard{
-    constructor(src, alt, headText, text, price, parentSelector){
+    constructor(src, alt, headText, text, price, parentSelector, ...classes){
         this.src = src;
         this.alt = alt;
         this.headText = headText;
         this.text = text;
         this.price = price;
+        this.classes = classes; // Это массив
         this.parent = document.querySelector(parentSelector);
         this.transfer = 27;
         this.changeToUAH();
@@ -211,8 +212,18 @@ class MenuCard{
     createCard(){
         const menuItem = document.createElement('div');
 
+        // Если в (...classes) ничего не передается
+        // Записываем дефолтный класс
+        if (this.classes.length === 0){
+            this.menuItem = 'menu__item';
+            menuItem.classList.add(this.menuItem);
+        } else {
+            // Используем rest оператор
+            // Добавляем все классы которые есть в массиве к елементу
+            this.classes.forEach(className => menuItem.classList.add(className));
+        }
+
         menuItem.innerHTML = `
-            <div class="menu__item">
                     <img src="${this.src}" alt="${this.alt}">
                     <h3 class="menu__item-subtitle">${this.headText}</h3>
                     <div class="menu__item-descr">${this.text}</div>
@@ -221,7 +232,6 @@ class MenuCard{
                         <div class="menu__item-cost">Цена:</div>
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     </div>
-                </div>
         `;
 
         this.parent.append(menuItem);
@@ -229,6 +239,11 @@ class MenuCard{
     }
 
 }
+
+// последние свойства пишем не через точку 'menu__item'
+// так как они попадают в массив (...classes)
+// после чего мы их перебираем this.classes.forEach(className => menuItem.classList.add(className))
+// и записываем как классы
 
 new MenuCard(
     'img/tabs/vegy.jpg',
@@ -238,7 +253,8 @@ new MenuCard(
     'больше свежих овощей и фруктов. Продукт активных и здоровых людей. ' +
     'Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
     9,
-    '.menu__field > .container'
+    '.menu__field > .container',
+
 ).createCard();
 
     new MenuCard(
@@ -248,7 +264,9 @@ new MenuCard(
         'В меню “Премиум” мы используем не только красивый дизайн упаковки,' +
         ' но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
         14,
-        '.menu__field > .container'
+        '.menu__field > .container',
+        'menu__item',
+        'test__class'
     ).createCard();
 
     new MenuCard(
@@ -259,7 +277,9 @@ new MenuCard(
         'это тщательный подбор ингредиентов: полное отсутствие продуктов животного ' +
         'происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
         21,
-        '.menu__field .container'
+        '.menu__field .container',
+        'menu__item',
+        'test__class'
     ).createCard();
 
 
