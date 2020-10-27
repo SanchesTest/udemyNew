@@ -86,24 +86,24 @@ req.then(data => {
       console.log(`Data processing ${data.name}...`);
       resolve(data);
     }, 2000);
-  })
-  .then(data => {
-    return new Promise((resolve, rejact) => {
-      setTimeout(() => {
-        data.add = Math.random();
-        resolve(data);
-      }, 2000);
-    })
-    .then(data => {
-      console.log(`Data output ${data.name}...`);
-      return data;
-    })
-    .then(data => {
-      setTimeout(() => {
-        console.log(data);
-      }, 2000);
-    });
   });
+})
+.then(data => {
+  return new Promise((resolve, rejact) => {
+    setTimeout(() => {
+      data.add = Math.random();
+      resolve(data);
+    }, 2000);
+  });
+})
+.then(data => {
+  console.log(`Data output ${data.name}...`);
+  return data;
+})
+.then(data => {
+  setTimeout(() => {
+    console.log(data);
+  }, 2000);
 })
 .catch(() => {
   console.log('Something went wrong...');
