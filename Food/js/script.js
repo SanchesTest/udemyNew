@@ -131,7 +131,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const modalTrigger = document.querySelectorAll('[data-modal]');
     const modal = document.querySelector('.modal');
-    const modalClose = document.querySelector('[data-close]');
 
     function openModal(){
         modal.classList.add('show');
@@ -151,11 +150,9 @@ window.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', openModal);
     });
 
-    modalClose.addEventListener('click', closeModal);
-
     // закрыть по клику на подложку
     modal.addEventListener('click', (e) => {
-        if(e.target === modal){
+        if(e.target === modal || e.target.getAttribute('data-close') == ''){
             closeModal();
         }
     });
@@ -169,7 +166,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     //вызов модалки через время
-    const modalTimerId = setTimeout(openModal, 5000);
+    const modalTimerId = setTimeout(openModal, 50000);
 
     //если доскросил до конца, показать модалку
     function showModalByScroll(){
@@ -240,48 +237,376 @@ class MenuCard{
 
 }
 
-// последние свойства пишем не через точку 'menu__item'
-// так как они попадают в массив (...classes)
-// после чего мы их перебираем this.classes.forEach(className => menuItem.classList.add(className))
-// и записываем как классы
+// Получаем данные с базы
 
-new MenuCard(
-    'img/tabs/vegy.jpg',
-    'vegy',
-    'Меню "Фитнес"',
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: ' +
-    'больше свежих овощей и фруктов. Продукт активных и здоровых людей. ' +
-    'Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-    9,
-    '.menu__field > .container',
+// throw позволяет генерировать исключения, определяемые пользователем. При этом выполнение текущей функции будет остановлено (инструкции после throw не будут выполнены), и управление будет передано в первый блок catch в стеке вызовов. Если catch блоков среди вызванных функций нет, выполнение программы будет остановлено.
 
-).createCard();
+const getResource = async (url) => {
+    const res = await fetch(url);
 
-    new MenuCard(
-        'img/tabs/elite.jpg',
-        'elite',
-        'Меню “Премиум”',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки,' +
-        ' но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        14,
-        '.menu__field > .container',
-        'menu__item',
-        'test__class'
-    ).createCard();
+    if(!res.ok){
+        throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+    }
 
-    new MenuCard(
-        'img/tabs/post.jpg',
-        'post',
-        'Меню "Постное"',
-        'Меню “Постное” - ' +
-        'это тщательный подбор ингредиентов: полное отсутствие продуктов животного ' +
-        'происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        21,
-        '.menu__field .container',
-        'menu__item',
-        'test__class'
-    ).createCard();
+    return await res.json();
+};
+
+// getResource('http://localhost:3000/menu')
+//     .then(data => {
+//         data.forEach(({img, altimg, title, descr, price}) => {
+//             new MenuCard(img, altimg, title, descr, price, '.menu .container').createCard();
+//         });
+//     });
 
 
+    axios.get('http://localhost:3000/menu')
+    .then(data => {
+        data.data.forEach(({img, altimg, title, descr, price}) => {
+            new MenuCard(img, altimg, title, descr, price, '.menu .container').createCard();
+        });
+    });
+
+
+// ====================================================================================
+// FORMS
+// ====================================================================================
+
+    const forms = document.querySelectorAll('form');
+
+    const message = {
+        loading: 'img/form/spinner.svg',
+        success: 'Спасибо, скоро с вами свяжемся',
+        failure: 'Ошибка...'
+    };
+
+    // подвязываем функцию отправки на все формы
+    forms.forEach(item => {
+        bindPostData(item);
+    });
+
+    // функция отправки
+    // function postData(form) {
+    //     form.addEventListener('submit', (e) => {
+    //         e.preventDefault();
+    //
+    //         const statusMessage = document.createElement('img');
+    //         statusMessage.src = message.loading;
+    //         statusMessage.style.cssText = `
+    //             display: block;
+    //             margin: 0 auto;
+    //         `;
+    //
+    //         form.insertAdjacentElement('afterend', statusMessage);
+    //
+    //         const formData = new FormData(form); // собирает данные с формы
+    //
+    //         fetch('server.php', {
+    //             method: "POST",
+    //             body: formData
+    //         })
+    //         .then(data => data.text()) //преобразуем в строку, для того что бы получить данные
+    //         .then(data => {
+    //             console.log(data);
+    //             showThanksModal(message.success);
+    //             statusMessage.remove();
+    //         }).catch(() => { //если что-то пошло не так
+    //             showThanksModal(message.failure);
+    //         }).finally(() => { //выполнить в любом случае
+    //             form.reset();
+    //         });
+    //
+    //     });
+    // }
+
+    //============================================
+//     отправка в формате JSON
+
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('img');
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+
+            form.insertAdjacentElement('afterend', statusMessage);
+
+            const formData = new FormData(form); // собирает данные с формы
+
+            // формируем обьект с данными с formData
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
+
+
+            postData('http://localhost:3000/requests', json)
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success);
+                statusMessage.remove();
+            }).catch(() => { //если что-то пошло не так
+                showThanksModal(message.failure);
+            }).finally(() => { //выполнить в любом случае
+                form.reset();
+            });
+
+        });
+    }
+
+    function showThanksModal(message) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+
+        prevModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
+        }, 4000);
+    }
+
+// ====================================================================================
+// ПОЛУЧИТЬ ДОСТУП К БД
+// ====================================================================================
+
+    // fetch('http://localhost:3000/menu')
+    //     .then(data => data.json()) // преобразуем в обычный обьект
+    //     .then(res => console.log(res));
+
+        // fetch('db.json')
+        // .then(data => data.json()) // преобразуем в обычный обьект
+        // .then(res => console.log(res));
+
+    // npx json-server --watch db.json  == запуск сервера
+
+//================================================
+//slider
+//================================================
+
+    // const slides = document.querySelectorAll('.offer__slide'),
+    //     prev = document.querySelector('.offer__slider-prev'),
+    //     next = document.querySelector('.offer__slider-next'),
+    //     total = document.querySelector('#total'),
+    //     current = document.querySelector('#current');
+    // let  slideIndex = 1;
+
+    // showSlids(slideIndex);
+
+    // if(slides.length < 10){
+    //     total.textContent = `0${slides.length}`;
+    // } else {
+    //     total.textContent = slides.length;
+    // }
+
+    // function showSlids(n){
+    //     if(n > slides.length) {
+    //         slideIndex = 1;
+    //     }
+
+    //     if(n < 1) {
+    //         slideIndex = slides.length;
+    //     }
+
+    //     slides.forEach(item => item.style.display = 'none');
+
+    //     slides[slideIndex - 1].style.display = 'block';
+
+    //     if(slides.length < 10){
+    //         current.textContent = `0${slideIndex}`;
+    //     } else {
+    //         current.textContent = slideIndex;
+    //     }
+    // }
+
+    // function plusSlides(n){
+    //     showSlids(slideIndex += n);
+    // }
+
+    // prev.addEventListener('click', () => {
+    //     plusSlides(-1);
+    // });
+
+    // next.addEventListener('click', () => {
+    //     plusSlides(1);
+    // });
+
+//================================================
+//slider carousel
+//================================================
+
+    const slides = document.querySelectorAll('.offer__slide'),
+        slider = document.querySelector('.offer__slider'),
+        prev = document.querySelector('.offer__slider-prev'),
+        next = document.querySelector('.offer__slider-next'),
+        total = document.querySelector('#total'),
+        current = document.querySelector('#current'),
+        slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+        slidesField = document.querySelector('.offer__slider-inner'),
+        width = window.getComputedStyle(slidesWrapper).width; //ширина окна слайдера
+    let  slideIndex = 1;
+    let offset = 0;
+
+    if(slides.length < 10){
+        total.textContent = `0${slides.length}`;
+        current.textContent = `0${slideIndex}`;
+    } else {
+        total.textContent = slides.length;
+        current.textContent = slideIndex;
+    }
+
+    slidesField.style.width = 100 * slides.length + '%'; //ширина всех слайдов
+    slidesField.style.display = 'flex';
+    slidesField.style.transition = '0.5s all';
+
+    slidesWrapper.style.overflow = 'hidden';
+
+    // все слайды одинаковой ширины
+    slides.forEach(slide => slide.style.width = width);
+
+    //точки
+    slider.style.position = 'relative';
+
+    const dots = document.createElement('ol'),
+        dotsMas = [];
+
+    dots.classList.add('carousel-indicators');
+    dots.style.cssText = `
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 15;
+        display: flex;
+        justify-content: center;
+        margin-right: 15%;
+        margin-left: 15%;
+        list-style: none;
+    `;
+    slider.append(dots);
+
+    for(let i = 0; i < slides.length; i++){
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', i + 1);
+        dot.style.cssText = `
+            box-sizing: content-box;
+            flex: 0 1 auto;
+            width: 30px;
+            height: 6px;
+            margin-right: 3px;
+            margin-left: 3px;
+            cursor: pointer;
+            background-color: #fff;
+            background-clip: padding-box;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            opacity: .5;
+            transition: opacity .6s ease;
+        `;
+        if(i == 0){
+            dot.style.opacity = 1;
+        }
+        dots.append(dot);
+        dotsMas.push(dot);
+    }
+
+    next.addEventListener('click', () => {
+        //если долистали до конца
+        //+width.slice(0, width.length - 2) = вырезаем 'px' и превращаем в число
+        if(offset == +width.slice(0, width.length - 2) * (slides.length - 1)){
+            offset = 0;
+        } else {
+            //листаем на ширину 1 слайда
+            offset += +width.slice(0, width.length - 2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(slideIndex == slides.length){
+            slideIndex = 1;
+        } else {
+            slideIndex ++;
+        }
+
+        if(slides.length < 10){
+            current.textContent = `0${slideIndex}`;
+        } else{
+            current.textContent = slideIndex;
+        }
+
+        dotsMas.forEach(dot => dot.style.opacity = '.5');
+        dotsMas[slideIndex - 1].style.opacity = 1;
+    });
+
+    prev.addEventListener('click', () => {
+        if(offset == 0){
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+        } else {
+            offset -= +width.slice(0, width.length - 2);
+        }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if(slideIndex == 1){
+            slideIndex = slides.length;
+        } else {
+            slideIndex --;
+        }
+
+        if(slides.length < 10){
+            current.textContent = `0${slideIndex}`;
+        } else{
+            current.textContent = slideIndex;
+        }
+
+        dotsMas.forEach(dot => dot.style.opacity = '.5');
+        dotsMas[slideIndex - 1].style.opacity = 1;
+    });
+
+    //точки
+    dotsMas.forEach(dot => {
+        dot.addEventListener('click', (e) => {
+            const slideTo = e.target.getAttribute('data-slide-to');
+
+            slideIndex = slideTo;
+            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+
+            slidesField.style.transform = `translateX(-${offset}px)`;
+
+            if(slides.length < 10){
+                current.textContent = `0${slideIndex}`;
+            } else{
+                current.textContent = slideIndex;
+            }
+
+            dotsMas.forEach(dot => dot.style.opacity = '.5');
+            dotsMas[slideIndex - 1].style.opacity = 1;
+        });
+    });
 
 });
+
+  
