@@ -535,15 +535,14 @@ const getResource = async (url) => {
 
     next.addEventListener('click', () => {
         //если долистали до конца
-        //+width.slice(0, width.length - 2) = вырезаем 'px' и превращаем в число
-        if(offset == +width.slice(0, width.length - 2) * (slides.length - 1)){
+        if(offset == replaceWidth(width) * (slides.length - 1)){
             offset = 0;
         } else {
             //листаем на ширину 1 слайда
-            offset += +width.slice(0, width.length - 2);
+            offset += replaceWidth(width);
         }
 
-        slidesField.style.transform = `translateX(-${offset}px)`;
+        transform(slidesField, offset);
 
         if(slideIndex == slides.length){
             slideIndex = 1;
@@ -551,11 +550,7 @@ const getResource = async (url) => {
             slideIndex ++;
         }
 
-        if(slides.length < 10){
-            current.textContent = `0${slideIndex}`;
-        } else{
-            current.textContent = slideIndex;
-        }
+        slideLengthLess(slides, current);
 
         dotsMas.forEach(dot => dot.style.opacity = '.5');
         dotsMas[slideIndex - 1].style.opacity = 1;
@@ -563,12 +558,12 @@ const getResource = async (url) => {
 
     prev.addEventListener('click', () => {
         if(offset == 0){
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = replaceWidth(width) * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= replaceWidth(width);
         }
 
-        slidesField.style.transform = `translateX(-${offset}px)`;
+        transform(slidesField, offset);
 
         if(slideIndex == 1){
             slideIndex = slides.length;
@@ -576,11 +571,7 @@ const getResource = async (url) => {
             slideIndex --;
         }
 
-        if(slides.length < 10){
-            current.textContent = `0${slideIndex}`;
-        } else{
-            current.textContent = slideIndex;
-        }
+        slideLengthLess(slides, current);
 
         dotsMas.forEach(dot => dot.style.opacity = '.5');
         dotsMas[slideIndex - 1].style.opacity = 1;
@@ -592,20 +583,33 @@ const getResource = async (url) => {
             const slideTo = e.target.getAttribute('data-slide-to');
 
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = replaceWidth(width) * (slideTo - 1);
 
-            slidesField.style.transform = `translateX(-${offset}px)`;
+            transform(slidesField, offset);
 
-            if(slides.length < 10){
-                current.textContent = `0${slideIndex}`;
-            } else{
-                current.textContent = slideIndex;
-            }
+            slideLengthLess(slides, current);
 
             dotsMas.forEach(dot => dot.style.opacity = '.5');
             dotsMas[slideIndex - 1].style.opacity = 1;
         });
     });
+
+    //+width.replace(/\D/g, '') = вырезаем все не числа и превращаем в число
+    function replaceWidth(t){
+        return +t.replace(/\D/g, '');
+    }
+
+    function slideLengthLess(s, c){
+        if(s.length < 10){
+            c.textContent = `0${slideIndex}`;
+        } else{
+            c.textContent = slideIndex;
+        }
+    }
+
+    function transform(elem, transf){
+        elem.style.transform = `translateX(-${transf}px)`;
+    }
 
 });
 
