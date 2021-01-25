@@ -611,6 +611,79 @@ const getResource = async (url) => {
         elem.style.transform = `translateX(-${transf}px)`;
     }
 
+//================================================
+//CALCULATOR
+//================================================
+
+    const resultCalc = document.querySelector('.calculating__result span');
+    let sexCalc = 'female', heightCalc, weightCalc, ageCalc, ratioCalc = 1.375;
+
+    function calcTotal() {
+        if(!sexCalc || !heightCalc || !weightCalc || !ageCalc || !ratioCalc){
+            resultCalc.textContent = '____';
+            return; // досрочно прервать функу
+        }
+
+        if(sexCalc === 'female'){
+            resultCalc.textContent = Math.round((447.6 + (9.2 * weightCalc) + (3.1 * heightCalc) - (4.3 * ageCalc)) * ratioCalc);
+        } else {
+            resultCalc.textContent = Math.round((88.36 + (13.4 * weightCalc) + (4.8 * heightCalc) - (5.7 * ageCalc)) * ratioCalc);
+        }
+
+    }
+
+    calcTotal();
+
+    function getStaticInfo(parentSelector, activeClass) {
+        const elem = document.querySelectorAll(`${parentSelector} div`); // получаем все дивы внутри родителя
+
+        elem.forEach(i => {
+            i.addEventListener('click', (e) => {
+                if(e.target.getAttribute('data-ratio')){
+                    ratioCalc = +e.target.getAttribute('data-ratio');
+                } else {
+                    sexCalc = e.target.getAttribute('id');
+                }
+
+                elem.forEach(item => {
+                    item.classList.remove(activeClass);
+                });
+
+                e.target.classList.add(activeClass);
+
+                calcTotal();
+            });
+        });
+
+    }
+
+    getStaticInfo('#gender', 'calculating__choose-item_active');
+    getStaticInfo('.calculating__choose_big', 'calculating__choose-item_active');
+
+    function getDynamicInfo(selector) {
+        const input = document.querySelector(selector);
+
+        input.addEventListener('input', () => {
+            switch (input.getAttribute('id')) {
+                case 'height':
+                    heightCalc = +input.value;
+                    break;
+                case 'weight':
+                    weightCalc = +input.value;
+                    break;
+                case 'age':
+                    ageCalc = +input.value;
+                    break;
+            }
+
+            calcTotal();
+        });
+    }
+
+    getDynamicInfo('#height');
+    getDynamicInfo('#weight');
+    getDynamicInfo('#age');
+
 });
 
   
