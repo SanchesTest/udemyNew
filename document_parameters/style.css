@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
   height: 2000px;
 }
@@ -43,4 +44,51 @@ button {
 .scroll-top{
   background: blue;
   bottom: 130px;
+=======
+body{
+  height: 2000px;
+}
+
+.box {
+box-sizing: border-box;
+  width: 400px;
+  height: 350px;
+  overflow: scroll;
+  margin: 0 auto;
+  margin-top: 50px;
+  padding: 10px;
+}
+
+.box::before{
+  content: 'hello';
+  color: red;
+}
+
+button {
+  width: 100px;
+  height: 40px;
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px; 
+}
+
+.top, .scroll-bot, .scroll-top{
+  padding: 10px 20px;
+  background: #000;
+  cursor: pointer;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  color: #fff;
+}
+
+.scroll-bot{
+  background: red;
+  bottom: 70px;
+}
+
+.scroll-top{
+  background: blue;
+  bottom: 130px;
+>>>>>>> 1ff3600f046799f50392a1506af3bf8fd34f718f
 }

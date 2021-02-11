@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
   padding: 0;
   margin: 0;
@@ -33,3 +34,40 @@ p{
 }
 
 
+=======
+body{
+  padding: 0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+}
+
+header{
+  padding: 2rem;
+  background: #545454;
+  text-align: center;
+  color: #fff;
+}
+
+p{
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.img-box{
+  display: flex;
+}
+
+.img-box img{
+  width: 100%;
+  display: block;
+}
+
+.img-box div{
+  padding: 0.5rem;
+  box-sizing: border-box;
+  display: flex;
+}
+
+
+>>>>>>> 1ff3600f046799f50392a1506af3bf8fd34f718f
