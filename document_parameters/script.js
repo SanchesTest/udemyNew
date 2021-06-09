@@ -13,7 +13,7 @@ box1.scrollTop // прокрутка елемента от верха стр.
 box1.scrollHeight // высота с учетом скрытого пространства
 
 //=====================  По клику раскрываем блок
-const btn = document.querySelector('button')
+const btn = document.querySelector('button');
 btn.addEventListener('click', () => {
     box1.style.height = box1.scrollHeight + 'px';
 });
