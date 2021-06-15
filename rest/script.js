@@ -85,3 +85,48 @@ const user3 = {
 const {name: {first, second}, pass, rigths} = user3;
 
 console.log(first, second, pass, rigths); // Sam Smith querty user
+
+// ===============================
+// Деструктуризация для массивов данных
+// ===============================
+
+const numbers = [3, 5, 8, 6, 6];
+
+const [a, b, c] = numbers;
+
+console.log(a, b, c); // 3 5 8
+
+
+// пропустить первые 2 значения
+const [, , j] = numbers;
+
+console.log(j); // 8
+
+// ===============================
+// Деструктуризация массив в массиве
+// ===============================
+
+// получаем данные с вложенных массивов
+const numbers2 = [[3, 5], [8, 6]];
+
+const [[a, b], [c, d]] = numbers2;
+
+console.log(a, b, c, d); // 3 5 8 6
+
+// ===============================
+// Деструктуризация Приммер
+// ===============================
+// выводим проценты населения
+
+const country = {
+  name: 'England',
+  population: 2000000,
+  gender: {
+    male: ['15%', '40%'],
+    female: ['16%', '29%']
+  }
+}
+
+const {gender: {male: [maleUnder18, maleAdult], female: [femaleUnder18, femaleAdult]}} = country;
+
+console.log(maleUnder18, maleAdult, femaleUnder18, femaleAdult); // 15% 40% 16% 29%
