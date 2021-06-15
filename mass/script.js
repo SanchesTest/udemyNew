@@ -76,3 +76,28 @@ function compareNum(a, b){
   return a - b;
 }
 
+// ================================================
+// filter
+// ================================================
+
+// фильтруем массив и воводим имена до 4 символов
+let names = ['Ivan', 'Ann', 'Joseph', 'Nikita'];
+
+let shortNames = names.filter((name) => {
+  return name.length < 5;
+});
+
+console.log(shortNames); // [ 'Ivan', 'Ann' ]
+
+// ================================================
+// map
+// ================================================
+
+// Выводим имена в нижнем регистре
+let answers = ['IvAn', 'aflExANDr', 'IndiAno', 'toM'];
+
+answers = answers.map((item) => {
+  return item.toLocaleLowerCase();
+});
+
+console.log(answers); // [ 'ivan', 'aflexandr', 'indiano', 'tom' ]
